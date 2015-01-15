@@ -200,3 +200,19 @@ func (d *digest64) Write(p []byte) (n int, err error) {
 
 	return len(p), nil
 }
+
+// This always uses native go code for benchmarking purposes.
+func (d *digest64) writeGeneric(p []byte) (n int, err error) {
+	// Number of 64-bit words
+	numWords := len(p) >> 3
+
+	fp := update64Generic(d.fingerprint, kTables64.raw, p, numWords)
+
+	// Process the remainder.
+	offset := numWords * 8
+
+	// Store the result.
+	d.fingerprint = updateSubword64(fp, p[offset:])
+
+	return len(p), nil
+}

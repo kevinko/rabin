@@ -269,3 +269,22 @@ func (d *digest) Write(p []byte) (n int, err error) {
 
 	return len(p), nil
 }
+
+// This always uses native go code for benchmarking purposes.
+func (d *digest) writeGeneric(p []byte) (n int, err error) {
+	// Number of 32-bit words
+	numWords := len(p) >> 2
+
+	// f = f1 f2  // f1 is the high word
+	f1 := d.f1
+	f2 := d.f2
+	f1, f2 = update32Generic(f1, f2, kTables.raw, p, numWords)
+
+	// Process the remainder.
+	offset := numWords * 4
+
+	// Store the result.
+	d.f1, d.f2 = updateSubword(f1, f2, p[offset:])
+
+	return len(p), nil
+}

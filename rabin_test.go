@@ -122,6 +122,20 @@ func Benchmark_Rabin(b *testing.B) {
 	}
 }
 
+// Native go implementation.
+func Benchmark_RabinGeneric(b *testing.B) {
+	b.StopTimer()
+	buff := makeSequence(32)
+	hash := new(digest)
+
+	b.StartTimer()
+	for ii := 0; ii < b.N; ii++ {
+		hash.writeGeneric(buff)
+		hash.Sum64()
+		hash.Reset()
+	}
+}
+
 func Benchmark_MD5(b *testing.B) {
 	b.StopTimer()
 	buff := makeSequence(32)
@@ -186,6 +200,22 @@ func Benchmark_RabinLong(b *testing.B) {
 	}
 }
 
+func Benchmark_RabinGenericLong(b *testing.B) {
+	b.StopTimer()
+	testData := makeTestData()
+
+	hash := new(digest)
+
+	b.StartTimer()
+	for ii := 0; ii < b.N; ii++ {
+		for jj := 0; jj < len(testData); jj++ {
+			hash.writeGeneric([]byte(testData[jj]))
+			hash.Sum64()
+			hash.Reset()
+		}
+	}
+}
+
 func Benchmark_Rabin64Long(b *testing.B) {
 	b.StopTimer()
 	testData := makeTestData()
@@ -196,6 +226,22 @@ func Benchmark_Rabin64Long(b *testing.B) {
 	for ii := 0; ii < b.N; ii++ {
 		for jj := 0; jj < len(testData); jj++ {
 			hash.Write([]byte(testData[jj]))
+			hash.Sum64()
+			hash.Reset()
+		}
+	}
+}
+
+func Benchmark_Rabin64GenericLong(b *testing.B) {
+	b.StopTimer()
+	testData := makeTestData()
+
+	hash := new(digest64)
+
+	b.StartTimer()
+	for ii := 0; ii < b.N; ii++ {
+		for jj := 0; jj < len(testData); jj++ {
+			hash.writeGeneric([]byte(testData[jj]))
 			hash.Sum64()
 			hash.Reset()
 		}
@@ -298,6 +344,20 @@ func Benchmark_Rabin32Block(b *testing.B) {
 	}
 }
 
+func Benchmark_Rabin32GenericBlock(b *testing.B) {
+	b.StopTimer()
+
+	buff := makeBlock(256 * 1024)
+	hash := new(digest)
+
+	b.StartTimer()
+	for ii := 0; ii < b.N; ii++ {
+		hash.writeGeneric(buff)
+		hash.Sum64()
+		hash.Reset()
+	}
+}
+
 func Benchmark_Rabin64Block(b *testing.B) {
 	b.StopTimer()
 
@@ -307,6 +367,20 @@ func Benchmark_Rabin64Block(b *testing.B) {
 	b.StartTimer()
 	for ii := 0; ii < b.N; ii++ {
 		hash.Write(buff)
+		hash.Sum64()
+		hash.Reset()
+	}
+}
+
+func Benchmark_Rabin64GenericBlock(b *testing.B) {
+	b.StopTimer()
+
+	buff := makeBlock(256 * 1024)
+	hash := new(digest64)
+
+	b.StartTimer()
+	for ii := 0; ii < b.N; ii++ {
+		hash.writeGeneric(buff)
 		hash.Sum64()
 		hash.Reset()
 	}
