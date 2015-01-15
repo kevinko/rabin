@@ -111,9 +111,7 @@ loop:
 
 	// NOTE: pshufb should be faster than bswap.
 	// p[] is processed in big-endian order.
-	// BSWAPQ BX, which is not supported by 6a at the moment (20120508)
-	BYTE $0x48
-	WORD $0xcb0f
+	BSWAPQ BX
 
 	// AX = t64 ^ t80 ^ t72 ^ t88 ^ t96 ^t104 ^ t112 ^ t120 ^ inWord
 	// This is the new fingerprint.

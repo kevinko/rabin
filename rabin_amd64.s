@@ -82,9 +82,9 @@ loop:
 
 	// BL = inWord
 	MOVL 0(SI), BX
+
 	// This is processed in big-endian order.
-	// BSWAP BX, which is not supported by 6a at the moment (20120508)
-	WORD $0xcb0f
+	BSWAPL BX
 
 	// AX = t64 ^ t72 ^ t80 ^ t88 ^ (fprint[2], inWord)
 	// This is the new fingerprint.
